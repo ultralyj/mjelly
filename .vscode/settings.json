@@ -1,0 +1,24 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "C:\\Users\\11657\\esp\\v5.3.1\\esp-idf",
+    "idf.openOcdConfigs": [
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "target/esp32s3.cfg"
+    ],
+    "idf.portWin": "COM10",
+    "idf.toolsPathWin": "C:\\Users\\11657\\.espressif",
+    "idf.flashType": "UART",
+    "files.associations": {
+        "gpio.h": "c",
+        "sdkconfig.h": "c",
+        "inttypes.h": "c",
+        "freertos.h": "c",
+        "esp_log.h": "c",
+        "bdc_motor.h": "c",
+        "led_strip.h": "c",
+        "esp_chip_info.h": "c",
+        "esp_vfs_fat.h": "c",
+        "esp_console.h": "c",
+        "esp_system.h": "c"
+    }
+}
