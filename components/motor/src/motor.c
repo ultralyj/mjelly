@@ -198,9 +198,9 @@ static void Motor_Control_Callback(void *args)
 {
     int cur_pulse_count = 0;
     pcnt_unit_handle_t pcnt_unit = motor_ctrl_ctx[0].pcnt_encoder;
-    pcnt_unit_get_count(pcnt_unit, &cur_pulse_count);
-    printf("enc=%d\r\n",cur_pulse_count);
-    int adcv;
-    ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, MOTOR0_ADC_GPIO, &adcv));
-    ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, MOTOR0_ADC_GPIO, adcv);
+    // pcnt_unit_get_count(pcnt_unit, &cur_pulse_count);
+    // printf("enc=%d\r\n",cur_pulse_count);
+    // int adcv;
+    // ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, MOTOR0_ADC_GPIO, &adcv));
+    // ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, MOTOR0_ADC_GPIO, adcv);
 }

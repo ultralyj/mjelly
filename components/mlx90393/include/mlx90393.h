@@ -1,8 +1,8 @@
 /**
  * Component header file.
  */
-#ifndef __MJD_MLX90393_H__
-#define __MJD_MLX90393_H__
+#ifndef __MLX90393_H__
+#define __MLX90393_H__
 
 
 #include <stdio.h>
@@ -21,7 +21,7 @@ extern "C" {
 /**
  * Device specifics (registers, NVRAM, etc.)
  */
-#include "mjd_mlx90393_defs.h"
+#include "mlx90393_defs.h"
 
 /**
  * I2C Settings
@@ -39,7 +39,7 @@ extern "C" {
 #define MJD_MLX90393_TIMER_ID     (TIMER_0)
 
 /**
- * My default MLX device settings - see mjd_mlx90393_init() - recommended settings from the DATA SHEET.
+ * My default MLX device settings - see mlx90393_init() - recommended settings from the DATA SHEET.
  */
 #define MJD_MLX90393_COMM_MODE_DEFAULT  (MJD_MLX90393_COMM_MODE_I2C)
 #define MJD_MLX90393_TCMP_EN_DEFAULT    (MJD_MLX90393_TCMP_EN_DISABLED)
@@ -137,7 +137,7 @@ typedef struct {
 /**
  * Function declarations
  */
-esp_err_t mjd_mlx90393_init(mjd_mlx90393_config_t* param_ptr_config);
+esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config);
 esp_err_t mjd_mlx90393_deinit(const mjd_mlx90393_config_t* param_ptr_config);
 
 esp_err_t mjd_mlx90393_log_device_parameters(const mjd_mlx90393_config_t* param_ptr_config);

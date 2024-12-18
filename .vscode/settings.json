@@ -5,7 +5,7 @@
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32s3.cfg"
     ],
-    "idf.portWin": "COM10",
+    "idf.portWin": "COM9",
     "idf.toolsPathWin": "C:\\Users\\11657\\.espressif",
     "idf.flashType": "UART",
     "files.associations": {
@@ -19,6 +19,9 @@
         "esp_chip_info.h": "c",
         "esp_vfs_fat.h": "c",
         "esp_console.h": "c",
-        "esp_system.h": "c"
+        "esp_system.h": "c",
+        "i2c_mux.h": "c",
+        "stdio.h": "c",
+        "i2c_master.h": "c"
     }
 }

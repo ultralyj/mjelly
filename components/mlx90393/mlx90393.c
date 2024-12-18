@@ -4,12 +4,12 @@
 #include "driver/timer.h"
 
 // Component header file(s)
-#include "mjd_mlx90393.h"
+#include "mlx90393.h"
 
 /*
  * Logging
  */
-static const char TAG[] = "mjd_mlx90393";
+static const char TAG[] = "mlx90393";
 
 /*
  * LOOKUP TABLES
@@ -555,7 +555,7 @@ static esp_err_t _write_register(const mjd_mlx90393_config_t* param_ptr_config, 
 }
 
 /*********************************************************************************
- * mjd_mlx90393_init()
+ * mlx90393_init()
  *
  * @datasheet Suggested EEPROM Configuration (pg20)
  *      For rotary applications three EEPROM addresses may need to be modified. They control the gain, filter, and communication mode among others.
@@ -590,7 +590,7 @@ static esp_err_t _write_register(const mjd_mlx90393_config_t* param_ptr_config, 
  *      OSR:       0x0 (0) => 0x3
  *
  *********************************************************************************/
-esp_err_t mjd_mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
+esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     ESP_LOGD(TAG, "%s()", __FUNCTION__);
 
     esp_err_t f_retval = ESP_OK;
@@ -653,18 +653,18 @@ esp_err_t mjd_mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
         _log_int_pin_value(param_ptr_config);
 
         // TIMER
-        timer_config_t tconfig = {};
-        tconfig.divider = 64000; // Let the timer tick on a relative slow pace. 1.25 Khz: esp_clk_apb_freq() / 64000 = 1250 ticks/second
-        tconfig.counter_dir = TIMER_COUNT_UP;
-        tconfig.counter_en = TIMER_PAUSE; // Pause when configured (do not start)
-        tconfig.alarm_en = TIMER_ALARM_DIS;
-        tconfig.auto_reload = false;
-        f_retval = timer_init(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, &tconfig);
-        if (f_retval != ESP_OK) {
-            ESP_LOGE(TAG, "%s(). timer_init() err %d %s", __FUNCTION__, f_retval, esp_err_to_name(f_retval));
-            // GOTO
-            goto cleanup;
-        }
+        // timer_config_t tconfig = {};
+        // tconfig.divider = 64000; // Let the timer tick on a relative slow pace. 1.25 Khz: esp_clk_apb_freq() / 64000 = 1250 ticks/second
+        // tconfig.counter_dir = TIMER_COUNT_UP;
+        // tconfig.counter_en = TIMER_PAUSE; // Pause when configured (do not start)
+        // tconfig.alarm_en = TIMER_ALARM_DIS;
+        // tconfig.auto_reload = false;
+        // f_retval = timer_init(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, &tconfig);
+        // if (f_retval != ESP_OK) {
+        //     ESP_LOGE(TAG, "%s(). timer_init() err %d %s", __FUNCTION__, f_retval, esp_err_to_name(f_retval));
+        //     // GOTO
+        //     goto cleanup;
+        // }
     } else {
         ESP_LOGI(TAG, "Melexis INT pin disabled by param_ptr_config");
     }
