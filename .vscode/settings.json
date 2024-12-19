@@ -5,7 +5,7 @@
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32s3.cfg"
     ],
-    "idf.portWin": "COM9",
+    "idf.portWin": "COM10",
     "idf.toolsPathWin": "C:\\Users\\11657\\.espressif",
     "idf.flashType": "UART",
     "files.associations": {

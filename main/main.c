@@ -31,7 +31,7 @@ const mjd_mlx90393_metrics_selector_t mlx90393_selector = {true, true, true, tru
 
 void app_main(void)
 {
-    printf("Mjelly v0.3b\n");
+    printf("Mjelly v0.3b2\n");
     /* 电机驱动与检测模组初始化 */
     MOTOR_init();
 
@@ -46,7 +46,7 @@ void app_main(void)
         for (uint8_t i = 0; i < 4; i++)
         {
             /* 检测mlx90393是否存在 */
-            esp_err_t ret = i2c_master_probe(i2c_bus_handle_g, mlx90393_addr_set[i], 500);
+            esp_err_t ret = i2cmux_probe(I2C_MUX_PORT, mlx90393_addr_set[i], 500);
             if(ret != ESP_OK)
             {
                 ESP_LOGE(TAG, "cannot find i2c device: mlx90393[CH:%d-%d], please check the system!",channel,i);

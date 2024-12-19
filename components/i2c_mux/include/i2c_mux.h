@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 #include "esp_err.h"
-#include "driver/i2c_master.h"
+#include "driver/i2c.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +25,11 @@ extern "C" {
 
 #define PCA9548A_ADDR 0x70    
 
+#define WRITE_BIT I2C_MASTER_WRITE  /*!< I2C master write */
+#define READ_BIT I2C_MASTER_READ    /*!< I2C master read */
+#define ACK_CHECK_EN 0x1            /*!< I2C master will check ack from slave*/
+#define ACK_CHECK_DIS 0x0           /*!< I2C master will not check ack from slave */
+
 typedef enum
 {
     I2CMUX_CHANNEL_ALLOFF = 0x00,
@@ -34,7 +39,6 @@ typedef enum
     I2CMUX_CHANNEL_ALLON = 0xFF
 }i2cmux_channel_sel;
 
-extern i2c_master_bus_handle_t i2c_bus_handle_g;
 
 /**
  * @brief 初始化I2C总线，并检测、配置设备PCA9548A
@@ -48,7 +52,14 @@ void i2cmux_init(void);
  * @param sel 通道选择
  */
 void i2cmux_set(i2cmux_channel_sel sel);
-
+/**
+ * @brief 检测I2C设备是否存在
+ * 
+ * @param i2c_num 
+ * @param address 
+ * @param xfer_timeout_ms 
+ */
+esp_err_t i2cmux_probe(i2c_port_t i2c_num, uint16_t address, int xfer_timeout_ms);
 #ifdef __cplusplus
 }
 #endif

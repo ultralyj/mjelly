@@ -666,7 +666,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
         //     goto cleanup;
         // }
     } else {
-        ESP_LOGI(TAG, "Melexis INT pin disabled by param_ptr_config");
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
     /*
@@ -705,7 +705,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
         // GOTO
         goto cleanup;
     }
-    ESP_LOGI(TAG, "%s(). Save in myconfig: get SENS_TC_LT: 0x%X (%u)", __FUNCTION__, sens_tc_lt, sens_tc_lt);
+    ESP_LOGD(TAG, "%s(). Save in myconfig: get SENS_TC_LT: 0x%X (%u)", __FUNCTION__, sens_tc_lt, sens_tc_lt);
     param_ptr_config->mlx_sens_tc_lt = sens_tc_lt;
 
     // SENS_TC_HT
@@ -716,7 +716,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
         // GOTO
         goto cleanup;
     }
-    ESP_LOGI(TAG, "%s(). Save in myconfig: get SENS_TC_HT: 0x%X (%u)", __FUNCTION__, sens_tc_ht, sens_tc_ht);
+    ESP_LOGD(TAG, "%s(). Save in myconfig: get SENS_TC_HT: 0x%X (%u)", __FUNCTION__, sens_tc_ht, sens_tc_ht);
     param_ptr_config->mlx_sens_tc_ht = sens_tc_ht;
 
     // TREF (16bit, storing this readonly register value for converting raw metrics to functional metrics
@@ -727,14 +727,14 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
         // GOTO
         goto cleanup;
     }
-    ESP_LOGI(TAG, "%s(). Save in myconfig: get TREF (uint16_t): 0x%" PRIX16 " (%" PRIu16")", __FUNCTION__, tref, tref);
+    ESP_LOGD(TAG, "%s(). Save in myconfig: get TREF (uint16_t): 0x%" PRIX16 " (%" PRIu16")", __FUNCTION__, tref, tref);
     param_ptr_config->mlx_tref = tref;
 
     /*
      * Setting good parameter values
      */
     // COMM_MODE
-    ESP_LOGI(TAG, "%s(). Set COMM_MODE: MJD_MLX90393_COMM_MODE_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_COMM_MODE_DEFAULT,
+    ESP_LOGD(TAG, "%s(). Set COMM_MODE: MJD_MLX90393_COMM_MODE_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_COMM_MODE_DEFAULT,
             MJD_MLX90393_COMM_MODE_DEFAULT);
     f_retval = mjd_mlx90393_set_comm_mode(param_ptr_config, MJD_MLX90393_COMM_MODE_DEFAULT);
     if (f_retval != ESP_OK) {
@@ -744,7 +744,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // TCMP_EN
-    ESP_LOGI(TAG, "%s(). Set TCMP_EN: MJD_MLX90393_TCMP_EN_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_TCMP_EN_DEFAULT,
+    ESP_LOGD(TAG, "%s(). Set TCMP_EN: MJD_MLX90393_TCMP_EN_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_TCMP_EN_DEFAULT,
             MJD_MLX90393_TCMP_EN_DEFAULT);
     f_retval = mjd_mlx90393_set_tcmp_en(param_ptr_config, MJD_MLX90393_TCMP_EN_DEFAULT);
     if (f_retval != ESP_OK) {
@@ -754,7 +754,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // HALLCONF
-    ESP_LOGI(TAG, "%s(). Set HALLCONF: MJD_MLX90393_HALLCONF_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_HALLCONF_DEFAULT,
+    ESP_LOGD(TAG, "%s(). Set HALLCONF: MJD_MLX90393_HALLCONF_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_HALLCONF_DEFAULT,
             MJD_MLX90393_HALLCONF_DEFAULT);
     f_retval = mjd_mlx90393_set_hallconf(param_ptr_config, MJD_MLX90393_HALLCONF_DEFAULT);
     if (f_retval != ESP_OK) {
@@ -764,7 +764,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // GAIN_SEL
-    ESP_LOGI(TAG, "%s(). Set GAIN_SEL: MJD_MLX90393_GAIN_SEL_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_GAIN_SEL_DEFAULT,
+    ESP_LOGD(TAG, "%s(). Set GAIN_SEL: MJD_MLX90393_GAIN_SEL_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_GAIN_SEL_DEFAULT,
             MJD_MLX90393_GAIN_SEL_DEFAULT);
     f_retval = mjd_mlx90393_set_gain_sel(param_ptr_config, MJD_MLX90393_GAIN_SEL_DEFAULT);
     if (f_retval != ESP_OK) {
@@ -774,7 +774,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // OSR
-    ESP_LOGI(TAG, "%s(). Set OSR: MJD_MLX90393_OSR_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_OSR_DEFAULT, MJD_MLX90393_OSR_DEFAULT);
+    ESP_LOGD(TAG, "%s(). Set OSR: MJD_MLX90393_OSR_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_OSR_DEFAULT, MJD_MLX90393_OSR_DEFAULT);
     f_retval = mjd_mlx90393_set_osr(param_ptr_config, MJD_MLX90393_OSR_DEFAULT);
     if (f_retval != ESP_OK) {
         ESP_LOGE(TAG, "%s(). ABORT. mjd_mlx90393_set_osr() failed | err %i (%s)", __FUNCTION__, f_retval, esp_err_to_name(f_retval));
@@ -783,7 +783,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // DIG_FILT
-    ESP_LOGI(TAG, "%s(). Set DIG_FILT: MJD_MLX90393_DIG_FILT_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_DIG_FILT_DEFAULT,
+    ESP_LOGD(TAG, "%s(). Set DIG_FILT: MJD_MLX90393_DIG_FILT_DEFAULT 0x%X (%u)", __FUNCTION__, MJD_MLX90393_DIG_FILT_DEFAULT,
             MJD_MLX90393_DIG_FILT_DEFAULT);
     f_retval = mjd_mlx90393_set_dig_filt(param_ptr_config, MJD_MLX90393_DIG_FILT_DEFAULT);
     if (f_retval != ESP_OK) {
@@ -793,7 +793,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // RES_XYZ
-    ESP_LOGI(TAG,
+    ESP_LOGD(TAG,
             "%s(). Set RES_XYZ: X= MJD_MLX90393_RES_XYZ_DEFAULT 0x%X (%u) | Y= MJD_MLX90393_RES_XYZ_DEFAULT 0x%X (%u) | Z= MJD_MLX90393_RES_XYZ_DEFAULT 0x%X (%u)",
             __FUNCTION__, MJD_MLX90393_RES_XYZ_DEFAULT, MJD_MLX90393_RES_XYZ_DEFAULT, MJD_MLX90393_RES_XYZ_DEFAULT, MJD_MLX90393_RES_XYZ_DEFAULT,
             MJD_MLX90393_RES_XYZ_DEFAULT, MJD_MLX90393_RES_XYZ_DEFAULT);
@@ -805,7 +805,7 @@ esp_err_t mlx90393_init(mjd_mlx90393_config_t* param_ptr_config) {
     }
 
     // OFFSET_X OFFSET_Y OFFSET_Z
-    ESP_LOGI(TAG,
+    ESP_LOGD(TAG,
             "%s(). Set OFFSET_*: X= MJD_MLX90393_OFFSET_X_DEFAULT 0x%X (%u) | Y= MJD_MLX90393_OFFSET_Y_DEFAULT 0x%X (%u) | Z= MJD_MLX90393_OFFSET_Z_DEFAULT 0x%X (%u)",
             __FUNCTION__, MJD_MLX90393_OFFSET_X_DEFAULT, MJD_MLX90393_OFFSET_X_DEFAULT, MJD_MLX90393_OFFSET_Y_DEFAULT, MJD_MLX90393_OFFSET_Y_DEFAULT,
             MJD_MLX90393_OFFSET_Z_DEFAULT, MJD_MLX90393_OFFSET_Z_DEFAULT);
@@ -1064,7 +1064,8 @@ esp_err_t mjd_mlx90393_cmd_reset(const mjd_mlx90393_config_t* param_ptr_config) 
     _delay_millisec(5);
 
     // INFORM
-    ESP_LOGI(TAG, "%s(). The device has been reset :)", __FUNCTION__);
+    ESP_LOGD(TAG, "%s(). The device has been reset :)", __FUNCTION__);
+    vTaskDelay(pdMS_TO_TICKS(10));
     // LABEL
     cleanup: ;
 
