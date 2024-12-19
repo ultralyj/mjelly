@@ -1,7 +1,7 @@
 /*
  * Component main file.
  */
-#include "driver/timer.h"
+#include "driver/gptimer.h"
 
 // Component header file(s)
 #include "mlx90393.h"
@@ -2041,20 +2041,20 @@ esp_err_t mjd_mlx90393_cmd_start_measurement(const mjd_mlx90393_config_t* param_
         const double MLX_TIMEOUT_SECONDS = 2; // FAIL when pin is not high after 2 seconds
         double timer_counter_value_seconds = 0;
 
-        timer_set_counter_value(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, 00000000ULL);
-        timer_start(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID);
+        // timer_set_counter_value(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, 00000000ULL);
+        // timer_start(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID);
 
-        while (gpio_get_level(param_ptr_config->int_gpio_num) != 1) {
-            timer_get_counter_time_sec(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, &timer_counter_value_seconds);
-            if (timer_counter_value_seconds > MLX_TIMEOUT_SECONDS) {
-                has_timed_out = true;
-                break; // BREAK WHILE
-            }
-            vTaskDelay(10 / portTICK_PERIOD_MS); // Wait in increments of 10 milliseonds (the lowest possible value for this RTOS func)
-        }
+        // while (gpio_get_level(param_ptr_config->int_gpio_num) != 1) {
+        //     timer_get_counter_time_sec(MJD_MLX90393_TIMER_GROUP_ID, MJD_MLX90393_TIMER_ID, &timer_counter_value_seconds);
+        //     if (timer_counter_value_seconds > MLX_TIMEOUT_SECONDS) {
+        //         has_timed_out = true;
+        //         break; // BREAK WHILE
+        //     }
+        //     vTaskDelay(10 / portTICK_PERIOD_MS); // Wait in increments of 10 milliseonds (the lowest possible value for this RTOS func)
+        // }
 
-        // pause timer (stop = n.a.)
-        timer_pause(TIMER_GROUP_0, TIMER_0);
+        // // pause timer (stop = n.a.)
+        // timer_pause(TIMER_GROUP_0, TIMER_0);
 
         if (has_timed_out == false) {
             ESP_LOGD(TAG, "OK. The INT DRDY Data Ready pin value did go to 1");

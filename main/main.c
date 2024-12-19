@@ -26,12 +26,12 @@
 static const char TAG[] = "main";
 
 mjd_mlx90393_config_t mlx90393_handle[4];
-const mlx90393_addr_set[4] = {0x0C, 0x0D, 0x0E, 0x0F};
+const uint8_t mlx90393_addr_set[4] = {0x0C, 0x0D, 0x0E, 0x0F};
 const mjd_mlx90393_metrics_selector_t mlx90393_selector = {true, true, true, true};
 
 void app_main(void)
 {
-    printf("Mjelly v0.3a\n");
+    printf("Mjelly v0.3b\n");
     /* 电机驱动与检测模组初始化 */
     MOTOR_init();
 
@@ -39,10 +39,7 @@ void app_main(void)
     i2cmux_init();
 
     /* 配置mlx90393 */
-    esp_err_t ret;
-    /* 初始化霍尔传感器 */
-    
-    for (size_t channel = 0; channel <= I2CMUX_CHANNEL2_ON; channel<<=1)
+    for (size_t channel = I2CMUX_CHANNEL0_ON; channel <= I2CMUX_CHANNEL2_ON; channel<<=1)
     {
         /* 依次选择三组mlx90393，每组4个 */
         i2cmux_set(channel);
@@ -64,13 +61,13 @@ void app_main(void)
             mlx90393_init(&mlx90393_handle[i]);
         }
     }
-    
-    /* 配置led灯带 */
-    led_strip_task_conf leds_handle;
-    leds_handle.color = (led_color_t){216, 56, 21};
-    leds_handle.method = LEDS_METHOD_BREATH;
-    leds_handle.period = 500;
-    leds_init(&leds_handle);
+
+    // /* 配置led灯带 */
+    // led_strip_task_conf leds_handle;
+    // leds_handle.color = (led_color_t){216, 56, 21};
+    // leds_handle.method = LEDS_METHOD_BREATH;
+    // leds_handle.period = 500;
+    // leds_init(&leds_handle);
     
     while(1)
     {

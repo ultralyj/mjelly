@@ -80,7 +80,7 @@ void MOTOR_init(void)
     esp_timer_handle_t motor_loop_timer = NULL;
     ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &motor_loop_timer));
     /* 启动定时器 */
-    ESP_LOGI(TAG, "Start motor speed loop");
+    ESP_LOGD(TAG, "Start motor speed loop");
     ESP_ERROR_CHECK(esp_timer_start_periodic(motor_loop_timer, MOTOR_LOOP_PERIOD_MS * 1000));
     
     bdc_motor_set_speed(motor_ctrl_ctx[0].motor,300);
@@ -109,9 +109,9 @@ static void MOTOR_Bdc_Unit_Init(motor_control_context_t *motor, const int pwma, 
     
     ESP_ERROR_CHECK(bdc_motor_new_mcpwm_device(&motor_config, &mcpwm_config, &motor_handle));
 
-    ESP_LOGI(TAG, "Enable motor");
+    ESP_LOGD(TAG, "Enable motor");
     ESP_ERROR_CHECK(bdc_motor_enable(motor_handle));
-    ESP_LOGI(TAG, "Forward motor");
+    ESP_LOGD(TAG, "Forward motor");
     ESP_ERROR_CHECK(bdc_motor_forward(motor_handle));
     motor->motor = motor_handle;
 }
@@ -126,7 +126,7 @@ static void MOTOR_Bdc_Unit_Init(motor_control_context_t *motor, const int pwma, 
 static void MOTOR_Enc_Unit_Init(motor_control_context_t *motor, const int enca, const int encb)
 {
     /* 初始化pcnt */
-    ESP_LOGI(TAG, "Init pcnt driver to decode rotary signal");
+    ESP_LOGD(TAG, "Init pcnt driver to decode rotary signal");
     pcnt_unit_config_t unit_config = {
         .high_limit = BDC_ENCODER_PCNT_HIGH_LIMIT,
         .low_limit = BDC_ENCODER_PCNT_LOW_LIMIT,
@@ -135,14 +135,14 @@ static void MOTOR_Enc_Unit_Init(motor_control_context_t *motor, const int enca, 
     pcnt_unit_handle_t pcnt_unit = NULL;
     ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &pcnt_unit));
     /* 设置pcnt毛刺滤波器 */
-    ESP_LOGI(TAG, "set glitch filter");
+    ESP_LOGD(TAG, "set glitch filter");
     pcnt_glitch_filter_config_t filter_config = {
         .max_glitch_ns = BDC_ENCODER_PCNT_FILTER,
     };
     ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
 
     /* 配置pcnt通道，一共两个通道，a检测上升沿，b检测下降沿（注意：两者引脚相反） */
-    ESP_LOGI(TAG, "install pcnt channels");
+    ESP_LOGD(TAG, "install pcnt channels");
     pcnt_chan_config_t chan_a_config = {
         .edge_gpio_num = enca,
         .level_gpio_num = encb,
@@ -164,7 +164,7 @@ static void MOTOR_Enc_Unit_Init(motor_control_context_t *motor, const int enca, 
     /* 启动pcnt模块 */
     ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
-    ESP_LOGI(TAG, "start pcnt unit");
+    ESP_LOGD(TAG, "start pcnt unit");
     ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
     /* 更新控制句柄 */
     motor->pcnt_encoder = pcnt_unit;
