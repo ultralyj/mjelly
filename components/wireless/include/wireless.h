@@ -18,10 +18,10 @@
 extern "C"
 {
 #endif
+    #define ESP_WIFI_SSID "CALCITE"
+    #define ESP_WIFI_PASS "qwertyui"
 
     #define HOST_IP_ADDR "192.168.137.1"
-    #define EXAMPLE_ESP_WIFI_SSID "BLUE"
-    #define EXAMPLE_ESP_WIFI_PASS "qwertyui"
     #define PORT 8080
     
     void wireless_send(const char *_payload);

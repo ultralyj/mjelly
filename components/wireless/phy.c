@@ -10,7 +10,7 @@
  */
 
 #include <stdio.h>
-#include "wifi.h"
+#include "wifi_phi.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

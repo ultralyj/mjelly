@@ -33,6 +33,8 @@
         "pid.h": "c",
         "cstring": "cpp",
         "mconsole.h": "c",
-        "esp_event.h": "c"
+        "esp_event.h": "c",
+        "wifi.h": "c",
+        "wifi_phi.h": "c"
     }
 }

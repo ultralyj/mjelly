@@ -27,6 +27,8 @@
 #include "driver/uart.h"
 #include <esp_console.h>
 #include <mconsole.h>
+#include <wireless.h>
+
 //#include "uart.h"
 // #include "esp_system.h"
 // #include "esp_log.h"
@@ -96,8 +98,10 @@ void app_main(void)
     leds_handle.period = 50;
     leds_init(&leds_handle);
 
+    wireless_init();
     /* 启动命令行 */
-    app_console_startup();
+    //app_console_startup();
+    char readbuffer[128];
     while (1)
     {   
         //app_console_startup();
@@ -105,8 +109,8 @@ void app_main(void)
         //printf("velocity_2: %d\r\n", velocity_2);
         //printf("velocity_0: %d, velocity_1: %d, velocity_2: %d\r\n", velocity_0, velocity_1, velocity_2);
         //printf("Current Pulse Count_0: %d, Current Pulse Count_1: %d, Current Pulse Count_2: %d\r\n", cur_pulse_count_0, cur_pulse_count_1, cur_pulse_count_2);
-        
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        wireless_receive(readbuffer, 128);
+        vTaskDelay(pdMS_TO_TICKS(100));
 //        demo();
 
         //cnn(model,in,out)

@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef __WIFI_H__
-#define __WIFI_H__
+#ifndef __WIFI_PHI_H__
+#define __WIFI_PHI_H__
 
 #include <stdint.h>
 #include "esp_wifi.h"
@@ -19,7 +19,7 @@
 extern "C"
 {
 #endif
-    void wireless_wifi_sta(wifi_config_t* wifi_config);
+    void wifi_init_sta(wifi_config_t* wifi_config);
 #ifdef __cplusplus
 }
 #endif
