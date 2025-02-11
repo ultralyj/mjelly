@@ -39,8 +39,8 @@ extern "C" {
 #define MOTOR2_ENCA_GPIO             12
 #define MOTOR2_ENCB_GPIO             11
 
-#define BDC_ENCODER_PCNT_HIGH_LIMIT   1000
-#define BDC_ENCODER_PCNT_LOW_LIMIT    -1000
+#define BDC_ENCODER_PCNT_HIGH_LIMIT   30000
+#define BDC_ENCODER_PCNT_LOW_LIMIT    -30000
 #define BDC_ENCODER_PCNT_FILTER       1000
 #define MOTOR_LOOP_PERIOD_MS          500   // calculate the motor speed every 10ms
 #define BDC_PID_EXPECT_SPEED          400  // expected motor speed, in the pulses counted by the rotary encoder
@@ -49,11 +49,32 @@ extern "C" {
 #define MOTOR1_ADC_GPIO ADC_CHANNEL_1
 #define MOTOR2_ADC_GPIO ADC_CHANNEL_2
 
+
+
+// 全局变量声明
+extern volatile int cur_pulse_count_0;
+extern volatile int cur_pulse_count_1;
+extern volatile int cur_pulse_count_2;
+
+// 用于保存上次脉冲数，计算脉冲数差（速度）
+extern volatile int last_pulse_count_0;
+extern volatile int last_pulse_count_1;
+extern volatile int last_pulse_count_2;
+
+// 速度值（脉冲数差）
+extern volatile int velocity_0;
+extern volatile int velocity_1;
+extern volatile int velocity_2;
+
+
+
 typedef struct {
     bdc_motor_handle_t motor;
     pcnt_unit_handle_t pcnt_encoder;
     int group_id;
 } motor_control_context_t;
+
+extern motor_control_context_t motor_ctrl_ctx[3];
 
 
 /**

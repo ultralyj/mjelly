@@ -224,25 +224,25 @@ static struct {
     struct arg_int *register_address;
     struct arg_int *data;
     struct arg_end *end;
-} i2cset_args;
+} Reverse_args;
 
 static int do_i2cset_cmd(int argc, char **argv)
 {
-    int nerrors = arg_parse(argc, argv, (void **)&i2cset_args);
+    int nerrors = arg_parse(argc, argv, (void **)&Reverse_args);
     if (nerrors != 0) {
-        arg_print_errors(stderr, i2cset_args.end, argv[0]);
+        arg_print_errors(stderr, Reverse_args.end, argv[0]);
         return 0;
     }
 
     /* Check chip address: "-c" option */
-    int chip_addr = i2cset_args.chip_address->ival[0];
+    int chip_addr = Reverse_args.chip_address->ival[0];
     /* Check register address: "-r" option */
     int data_addr = 0;
-    if (i2cset_args.register_address->count) {
-        data_addr = i2cset_args.register_address->ival[0];
+    if (Reverse_args.register_address->count) {
+        data_addr = Reverse_args.register_address->ival[0];
     }
     /* Check data: "-d" option */
-    int len = i2cset_args.data->count;
+    int len = Reverse_args.data->count;
 
     i2c_device_config_t i2c_dev_conf = {
         .scl_speed_hz = i2c_frequency,
@@ -256,7 +256,7 @@ static int do_i2cset_cmd(int argc, char **argv)
     uint8_t *data = malloc(len + 1);
     data[0] = data_addr;
     for (int i = 0; i < len; i++) {
-        data[i + 1] = i2cset_args.data->ival[i];
+        data[i + 1] = Reverse_args.data->ival[i];
     }
     esp_err_t ret = i2c_master_transmit(dev_handle, data, len + 1, I2C_TOOL_TIMEOUT_VALUE_MS);
     if (ret == ESP_OK) {
@@ -276,16 +276,16 @@ static int do_i2cset_cmd(int argc, char **argv)
 
 static void register_i2cset(void)
 {
-    i2cset_args.chip_address = arg_int1("c", "chip", "<chip_addr>", "Specify the address of the chip on that bus");
-    i2cset_args.register_address = arg_int0("r", "register", "<register_addr>", "Specify the address on that chip to read from");
-    i2cset_args.data = arg_intn(NULL, NULL, "<data>", 0, 256, "Specify the data to write to that data address");
-    i2cset_args.end = arg_end(2);
+    Reverse_args.chip_address = arg_int1("c", "chip", "<chip_addr>", "Specify the address of the chip on that bus");
+    Reverse_args.register_address = arg_int0("r", "register", "<register_addr>", "Specify the address on that chip to read from");
+    Reverse_args.data = arg_intn(NULL, NULL, "<data>", 0, 256, "Specify the data to write to that data address");
+    Reverse_args.end = arg_end(2);
     const esp_console_cmd_t i2cset_cmd = {
         .command = "i2cset",
         .help = "Set registers visible through the I2C bus",
         .hint = NULL,
         .func = &do_i2cset_cmd,
-        .argtable = &i2cset_args
+        .argtable = &Reverse_args
     };
     ESP_ERROR_CHECK(esp_console_cmd_register(&i2cset_cmd));
 }

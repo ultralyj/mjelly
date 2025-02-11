@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-static led_strip_handle_t led_strip;
+led_strip_handle_t led_strip;
 /**
  * @brief 灯带控制的rtos线程
  * 
@@ -46,6 +46,7 @@ void leds_init(led_strip_task_conf* led_strip_conf)
                 &(led_strip_conf->led_strip_task_handler));
 }
 
+led_color_t g_color;
 /**
  * @brief 灯带控制的rtos线程
  * 
@@ -53,7 +54,7 @@ void leds_init(led_strip_task_conf* led_strip_conf)
  */
 static void x_task_led(void *pvparam)
 {
-    led_color_t color = ((led_strip_task_conf*)pvparam)->color;
+    g_color = ((led_strip_task_conf*)pvparam)->color;
     int method = ((led_strip_task_conf*)pvparam)->method;
     int period = ((led_strip_task_conf*)pvparam)->period;
     while(1)
@@ -64,15 +65,15 @@ static void x_task_led(void *pvparam)
             vTaskDelay(pdMS_TO_TICKS(100));
             break;
         case 1:
-            led_strip_set_on(led_strip, color);
+            led_strip_set_on(led_strip, g_color);
             vTaskDelay(pdMS_TO_TICKS(period));
             break;
         case 2:
-            led_strip_blink(led_strip, color);
+            led_strip_blink(led_strip, g_color);
             vTaskDelay(pdMS_TO_TICKS(period/2));
             break;
         case 3:
-            led_strip_set_breath(led_strip, color);
+            led_strip_set_breath(led_strip, g_color);
             vTaskDelay(pdMS_TO_TICKS(period/2));
             break;
         default:

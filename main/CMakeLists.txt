@@ -6,6 +6,9 @@ console
 leds
 mlx90393
 i2c_mux
+pid
+console
+mconsole
 ")
 idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS ""

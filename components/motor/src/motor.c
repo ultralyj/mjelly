@@ -16,11 +16,27 @@
 #include "driver/pulse_cnt.h"
 #include "driver/gpio.h"
 #include "esp_adc/adc_oneshot.h"
+#include "pid.h"
 
 static const char *TAG = "MOTOR";
 
-static motor_control_context_t motor_ctrl_ctx[3];
+motor_control_context_t motor_ctrl_ctx[3];
 adc_oneshot_unit_handle_t adc1_handle;
+
+// 定义全局变量，volatile 防止编译器优化
+volatile int cur_pulse_count_0 = 0;
+volatile int cur_pulse_count_1 = 0;
+volatile int cur_pulse_count_2 = 0;
+
+// 用于保存上次脉冲数，计算脉冲数差（速度）
+volatile int last_pulse_count_0 = 0;
+volatile int last_pulse_count_1 = 0;
+volatile int last_pulse_count_2 = 0;
+
+// 速度值（脉冲数差）
+volatile int velocity_0 = 0;
+volatile int velocity_1 = 0;
+volatile int velocity_2 = 0;
 
 /**
  * @brief 配置单个电机的互补pwm驱动(由mcpwm外设输出)
@@ -82,8 +98,18 @@ void MOTOR_init(void)
     /* 启动定时器 */
     ESP_LOGD(TAG, "Start motor speed loop");
     ESP_ERROR_CHECK(esp_timer_start_periodic(motor_loop_timer, MOTOR_LOOP_PERIOD_MS * 1000));
+
+    bdc_motor_forward(motor_ctrl_ctx[0].motor);
+    bdc_motor_reverse(motor_ctrl_ctx[1].motor);
+    bdc_motor_reverse(motor_ctrl_ctx[2].motor);
+
+    // bdc_motor_reverse(motor_ctrl_ctx[0].motor);
+    // bdc_motor_reverse(motor_ctrl_ctx[1].motor);
+    // bdc_motor_reverse(motor_ctrl_ctx[2].motor);
     
-    bdc_motor_set_speed(motor_ctrl_ctx[0].motor,300);
+    bdc_motor_set_speed(motor_ctrl_ctx[0].motor,0);
+    bdc_motor_set_speed(motor_ctrl_ctx[1].motor,0);
+    bdc_motor_set_speed(motor_ctrl_ctx[2].motor,0);
 }
 
 /**
@@ -161,6 +187,14 @@ static void MOTOR_Enc_Unit_Init(motor_control_context_t *motor, const int enca, 
     ESP_ERROR_CHECK(pcnt_channel_set_edge_action(pcnt_chan_b, PCNT_CHANNEL_EDGE_ACTION_INCREASE, PCNT_CHANNEL_EDGE_ACTION_DECREASE));
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(pcnt_chan_b, PCNT_CHANNEL_LEVEL_ACTION_KEEP, PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
 
+    /* 添加观察点 */
+    ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, BDC_ENCODER_PCNT_HIGH_LIMIT));  // 设定高限制观察点
+    ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, BDC_ENCODER_PCNT_LOW_LIMIT));   // 设定低限制观察点
+
+    /* 设置pcnt中断回调 */
+//    ESP_ERROR_CHECK(pcnt_unit_register_isr_handler(pcnt_unit, pcnt_isr_handler, (void *)pcnt_unit));
+
+
     /* 启动pcnt模块 */
     ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
@@ -196,11 +230,67 @@ static void MOTOR_Adc_Unit_Init(void)
  */
 static void Motor_Control_Callback(void *args)
 {
-    int cur_pulse_count = 0;
-    pcnt_unit_handle_t pcnt_unit = motor_ctrl_ctx[0].pcnt_encoder;
-    // pcnt_unit_get_count(pcnt_unit, &cur_pulse_count);
-    // printf("enc=%d\r\n",cur_pulse_count);
+//    int cur_pulse_count_0, cur_pulse_count_1, cur_pulse_count_2 = 0;
+
+// pid_control();//PID应该放到这里
+    static int count0, count1, count2 = 0;
+
+    pcnt_unit_handle_t pcnt_unit_0 = motor_ctrl_ctx[0].pcnt_encoder;
+    pcnt_unit_handle_t pcnt_unit_1 = motor_ctrl_ctx[1].pcnt_encoder;
+    pcnt_unit_handle_t pcnt_unit_2 = motor_ctrl_ctx[2].pcnt_encoder;
+
+    // 获取当前脉冲数
+    pcnt_unit_get_count(pcnt_unit_0, &cur_pulse_count_0);
+    pcnt_unit_get_count(pcnt_unit_1, &cur_pulse_count_1);
+    pcnt_unit_get_count(pcnt_unit_2, &cur_pulse_count_2);
+
+    velocity_0 = cur_pulse_count_0 - last_pulse_count_0;
+    velocity_1 = cur_pulse_count_1 - last_pulse_count_1;
+    velocity_2 = cur_pulse_count_2 - last_pulse_count_2;
+
+    last_pulse_count_0 = cur_pulse_count_0;
+    last_pulse_count_1 = cur_pulse_count_1;
+    last_pulse_count_2 = cur_pulse_count_2;
+
+    count0 ++;
+    count1 ++;
+    count2 ++;
+
+    //pid_control();
+    //pcnt_unit_clear_count(pcnt_unit);
+   // 打印当前脉冲数、溢出次数和总脉冲数
+//   printf("Current Pulse Count_0: %d, Current Pulse Count_1: %d, Current Pulse Count_2: %d\r\n", cur_pulse_count_0, cur_pulse_count_1, cur_pulse_count_2);
+
+
+    if (count0 >= 10){
+        if (cur_pulse_count_0 >= -1000 && cur_pulse_count_0 <= 8000) {
+            bdc_motor_set_speed(motor_ctrl_ctx[0].motor,0);  // 假设这是停止电机的函数
+            pcnt_unit_clear_count(pcnt_unit_0);
+            count0 = 0;
+        }
+    }
+
+    if (count1 >= 10){
+        if (cur_pulse_count_1 >= -1000 && cur_pulse_count_1 <= 8000) {
+            bdc_motor_set_speed(motor_ctrl_ctx[1].motor,0);  // 假设这是停止电机的函数
+            pcnt_unit_clear_count(pcnt_unit_1);
+            count1 = 0;
+        }
+    }
+
+    if (count2 >=10){
+        if (cur_pulse_count_2 >= -1000 && cur_pulse_count_2 <= 8000) {
+            bdc_motor_set_speed(motor_ctrl_ctx[2].motor,0);  // 假设这是停止电机的函数
+            pcnt_unit_clear_count(pcnt_unit_2);
+            count2 = 0;
+        }
+    }
+
+
+
+ 
     // int adcv;
     // ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, MOTOR0_ADC_GPIO, &adcv));
     // ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, MOTOR0_ADC_GPIO, adcv);
 }
+
